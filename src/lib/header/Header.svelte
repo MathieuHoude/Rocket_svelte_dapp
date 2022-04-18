@@ -17,7 +17,7 @@
 		  <NavLink href="/">Home</NavLink>
 		</NavItem>
 		<NavItem>
-		  <NavLink href="https://github.com/bestguy/sveltestrap">Get NFT</NavLink>
+		  <NavLink href="/mint">Get NFT</NavLink>
 		</NavItem>
 		<Dropdown nav inNavbar>
 		  <DropdownToggle nav caret>Collection</DropdownToggle>
