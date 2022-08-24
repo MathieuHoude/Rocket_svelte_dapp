@@ -1,59 +1,61 @@
 <script>
-    import { onMount } from 'svelte';
-    import { defaultEvmStores, web3, selectedAccount, connected, chainId, chainData } from 'svelte-web3'
     import { signERC2612Permit } from 'eth-permit';
     import { Container, Image, Button } from 'sveltestrap';
     export let message
-    export let tipAddress
+    
+    import { onMount } from 'svelte';
+    import { defaultEvmStores, web3, selectedAccount, connected, chainId, chainData } from 'svelte-web3'
     import RocketTokenContract from './RocketToken.json';
-    const CONTRACT_ADDRESS = '0x179f3Dc36719aa51945AF484E3EeD13E7fff4ae3';
+    const NFTCONTRACT_ADDRESS = '0x5E2bB780fE31C097aF60A2D5B35726F102a75049';
 
     let contractInstance;
 
     $: checkAccount = $selectedAccount || '0x0000000000000000000000000000000000000000'
     $: balance = $connected ? $web3.eth.getBalance(checkAccount) : ''
-    const sendTip = async (e) => {
-      console.log('Received move event (sendTip button)', e)
-      const tx = await $web3.eth.sendTransaction({
-        // gasPrice: $web3.utils.toHex($web3.utils.toWei('30', 'gwei')),
-        gasLimit: $web3.utils.toHex('21000'),
-        from: $selectedAccount,
-        to: tipAddress,
-        value: $web3.utils.toHex($web3.utils.toWei('1', 'finney'))
-      })
-      console.log('Receipt from sendTip transaction', tx)
-      alert('Thanks!')
-    }
     onMount(
       async () => {
-        message = 'Connecting to Ethereum Testnet Görli...'
-         await defaultEvmStores.setBrowserProvider()
+        message = 'Connecting to Rocket Elevators blockchain...'
+         await defaultEvmStores.setProvider()
         message = ''
-        contractInstance = await getContract(CONTRACT_ADDRESS)
+        contractInstance = await getContract(NFTCONTRACT_ADDRESS)
+        console.log(contractInstance)
       })
+    const getWalletTokens = async (e) => {
+      const res = await fetch(`https://express-api.codeboxxtest.xyz/NFT/getWalletTokens/${checkAccount}`, {
+        method: 'GET'
+      })
+      const json = await res.json()
+      console.log(json)
+    }
 
+    async function approve()  {
+        await contractInstance.methods.approve(NFTCONTRACT_ADDRESS, 1).send({
+            from: $selectedAccount,
+        });
+    }
+    async function getContract(address) {
+      const networkId = await $web3.eth.net.getId();
+      console.log(networkId)
+      const deployedNetwork = RocketTokenContract.networks[networkId];
+      return new $web3.eth.Contract(
+          RocketTokenContract.abi,
+        "0x2f679c4fA4Fe7c1cB62D6fFbdC9879D3e221C93b", {
+          from: address,
+          gas: 2000000
+        }
+      );
+    }
     async function permit()  {
         const value = $web3.utils.toWei('1', 'ether');
         
         // Sign message using injected provider (ie Metamask).
         // You can replace window.ethereum with any other web3 provider.
-        const result = await signERC2612Permit($web3.currentProvider, CONTRACT_ADDRESS, '0x49C99dB83eA1cDa354b718A4Be90f4B1C3Dc94A4', '0x642be3BA96c16a819Db48944c1e029dF55E4dC6d', value);
+        const result = await signERC2612Permit($web3.currentProvider, NFTCONTRACT_ADDRESS, '0x49C99dB83eA1cDa354b718A4Be90f4B1C3Dc94A4', '0x642be3BA96c16a819Db48944c1e029dF55E4dC6d', value);
         console.log(result)
-        await contractInstance.methods.permit('0x49C99dB83eA1cDa354b718A4Be90f4B1C3Dc94A4', '0x642be3BA96c16a819Db48944c1e029dF55E4dC6d', value, result.deadline, result.v, result.r, result.s).send({
-            from: '0x49C99dB83eA1cDa354b718A4Be90f4B1C3Dc94A4',
-        });
+        // await contractInstance.methods.permit('0x49C99dB83eA1cDa354b718A4Be90f4B1C3Dc94A4', '0x642be3BA96c16a819Db48944c1e029dF55E4dC6d', value, result.deadline, result.v, result.r, result.s).send({
+        //     from: '0x49C99dB83eA1cDa354b718A4Be90f4B1C3Dc94A4',
+        // });
     }
-    async function getContract(address) {
-    const networkId = await $web3.eth.net.getId();
-    const deployedNetwork = RocketTokenContract.networks[networkId];
-    return new $web3.eth.Contract(
-        RocketTokenContract.abi,
-      deployedNetwork && deployedNetwork.address, {
-        from: address,
-        gas: 2000000
-      }
-    );
-  }
   </script>
   
   <svelte:head>
@@ -87,7 +89,7 @@
       {/await} {$chainData.nativeCurrency.symbol}
     </p>
     {/if}
-    <button on:click|once={permit}>
+    <button on:click={approve}>
         Click me
     </button>
   

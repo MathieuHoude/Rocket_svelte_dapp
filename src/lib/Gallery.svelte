@@ -21,7 +21,7 @@
 </style>
 
 <section id="gallery">
-    <svelte:component this={Carousel}  infinite autoplay particlesToShow={5} particlesToScroll={2}>
+    <svelte:component this={Carousel} infinite autoplay particlesToShow={5} particlesToScroll={2}>
         {#each {length: 10} as _, index}
         <div>
             <Image thumbnail alt="NFT #{index+1}" src="https://picsum.photos/{image_size+100}/{image_size}?random={index+1}"/>
