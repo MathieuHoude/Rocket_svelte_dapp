@@ -1,4 +1,4 @@
-<script>
+<!-- <script>
     import { signERC2612Permit } from 'eth-permit';
     import { Container, Image, Button } from 'sveltestrap';
     export let message
@@ -113,4 +113,4 @@
               max-width: none;
           }
       }
-  </style>
+  </style> -->
