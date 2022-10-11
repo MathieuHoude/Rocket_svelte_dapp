@@ -21,8 +21,6 @@
     "@lukeed/uuid": "^2.0.0",
     "@truffle/contract": "^4.5.7",
     "cookie": "^0.4.1",
-    "eth-permit": "^0.2.1",
-    "hydraweb3-js": "^0.0.4",
-    "svelte-web3": "^3.4.1"
+    "hydraweb3-js": "^0.0.4"
   }
 }
