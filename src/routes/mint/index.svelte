@@ -18,7 +18,6 @@
 
     onMount( async () => {
             window.postMessage({ message: { type: 'CONNECT_HYDRAWALLET' }}, '*')
-            minted = await getTotalSupply();
         }
     )
 
@@ -37,6 +36,7 @@
             console.log("hydraweb3: ", hydraweb3)
             // Create a new Contract instance and use the same provider as hydraweb3
             contract = hydraweb3.Contract(contractAddress, HydraNFTABI);
+            getTotalSupply();
         } 
     }
     function handleHydrawalletInstalledOrUpdated(event) {
@@ -56,8 +56,8 @@
         const data = hydraweb3.encoder.constructData(contract.abi, "totalSupply", []);
         let result = await contract.provider.rawCall('callcontract', [contract.address, data, account]);
         console.log("response: ", result)
-        let name = hydraweb3.decoder.decodeCall(result, contract.abi, "totalSupply", true);
-        console.log(name)
+        let output = hydraweb3.decoder.decodeCall(result, contract.abi, "totalSupply", true);
+        minted = output.executionResult.formattedOutput[0].toNumber()
     }
 
 </script>
@@ -74,7 +74,6 @@
     <h2>{balance}</h2>
     <h1>Total NFT minted: </h1>
     <h2>{minted}</h2>
-    <button on:click={getTotalSupply}></button>
 
     
 </Container>
