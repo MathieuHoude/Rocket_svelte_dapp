@@ -17,8 +17,13 @@
   },
   "type": "module",
   "dependencies": {
+    "@esbuild-plugins/node-globals-polyfill": "^0.1.1",
+    "@esbuild-plugins/node-modules-polyfill": "^0.1.4",
     "@fontsource/fira-mono": "^4.5.0",
     "@lukeed/uuid": "^2.0.0",
-    "cookie": "^0.4.1"
+    "@truffle/contract": "^4.5.7",
+    "buffer": "^6.0.3",
+    "cookie": "^0.4.1",
+    "hydraweb3-js": "^0.0.4"
   }
 }
